@@ -6,19 +6,15 @@
     android:orientation="vertical"
      >
 
-    <EditText
-        android:id="@+id/phoneNumber"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:saveEnabled="false"
+        android:text="The response from the network call show show below"
         />
 
-    <EditText
-        android:id="@+id/phoneNumber2"
+    <TextView
+        android:id="@+id/networkResponse"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:saveEnabled="false"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -1,8 +1,10 @@
 package tutorials.freelance.networkandinstance;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -15,7 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText mPhoneNumber, mPhoneNumber2;
+    TextView mNetworkResponse;
+    ProgressDialog progressDialog;
 
     Retrofit retrofit;
 
@@ -27,19 +30,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPhoneNumber = findViewById(R.id.phoneNumber);
+        mNetworkResponse = findViewById(R.id.networkResponse);
 
-        mPhoneNumber2 = findViewById(R.id.phoneNumber2);
+        progressDialog = new ProgressDialog(this);
+        //To prevent the user from dismissing the dialog
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading data from the network");
 
-        mPhoneNumber2.setText("Hello world");
+        progressDialog.show();
 
-        if (savedInstanceState != null){
-            mPhoneNumber2.setText("Hello world");
-            final String phoneNumberEnteredTheOtherTime = savedInstanceState.getString("phone_number");
-            Toast.makeText(this, phoneNumberEnteredTheOtherTime, Toast.LENGTH_LONG).show();
 
-            mPhoneNumber2.setText(phoneNumberEnteredTheOtherTime);
-        }
 
         Gson gson = new Gson();
         retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create(gson)).baseUrl("https://randomuser.me/").build();
@@ -49,24 +49,19 @@ public class MainActivity extends AppCompatActivity {
         myService.getRandomData().enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
+                progressDialog.hide();
                 Toast.makeText(MainActivity.this, response.body().toString(), Toast.LENGTH_LONG).show();
+                String responseFromNetwork = response.body().toString();
+                mNetworkResponse.setText(responseFromNetwork);
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                progressDialog.hide();
+                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
             }
 
     });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        String phoneNumberEntered = mPhoneNumber.getText().toString();
-
-        outState.putString("phone_number", phoneNumberEntered);
-
-    }
 }
